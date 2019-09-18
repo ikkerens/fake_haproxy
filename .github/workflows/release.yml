@@ -24,8 +24,8 @@ jobs:
       # Prepare crate
       - name: Set crate version
         run: sed -i "s/^\(version = \).*/version = \"$(git describe --tags)\"/g" ./Cargo.toml
-      - name: Package crate
-        run: cargo login ${{ secrets.CRATES_IO_TOKEN }} && cargo publish
+      - name: Publish crate
+        run: cargo login ${{ secrets.CRATES_IO_TOKEN }} && cargo publish --allow-dirty # Dirty because we modified Cargo.toml
 
       # Prepare github release
       - name: Build linux
