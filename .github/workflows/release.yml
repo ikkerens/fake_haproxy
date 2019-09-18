@@ -48,7 +48,6 @@ jobs:
           name: ikkerens/fake_haproxy
           username: ikkerens
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          registry: docker.pkg.github.com
       - name: Update Docker Hub Description
         uses: peter-evans/dockerhub-description@v2.0.0
         env:
