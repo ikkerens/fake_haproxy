@@ -1,0 +1,17 @@
+[package]
+name = "fake_haproxy"
+description = "A connection forwarder that adds a haproxy v1 header to every connection"
+repository = "https://github.com/ikkerens/fake_haproxy"
+version = "0.0.0-dev"
+authors = ["Rens Rikkerink <github@ikkerens.com>"]
+edition = "2018"
+license = "MIT"
+exclude = ["/README.md", "/Dockerfile", "/.dockerignore", "/.gitignore", "/.github/", "/.rustfmt.toml"]
+
+[dependencies]
+ctrlc = "3.1"
+failure = "0.1"
+futures = "0.1"
+getopts = "0.2"
+tokio-core = "0.1"
+tokio-io = "0.1"

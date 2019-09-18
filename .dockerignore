@@ -1,0 +1,7 @@
+# Rust specific
+/target
+/**/*.rs.bk
+
+# IntelliJ specific
+/.idea/
+/*.iml

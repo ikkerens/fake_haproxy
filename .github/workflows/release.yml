@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Setup
+      - name: Prepare cross compilation
+        run: cargo install cross
+
+      # Basic tests
+      - name: Checkout git repository
+        uses: actions/checkout@v1
+      - name: Test code formatting
+        run: cargo fmt --all -- --check
+      - name: Test code correctness
+        run: cargo clippy --all -- -D warnings
+
+      # Prepare crate
+      - name: Set crate version
+        run: sed -i "s/^\(version = \).*/version = \"$(git describe --tags)\"/g" ./Cargo.toml
+      - name: Package crate
+        run: cargo login ${{ secrets.CRATES_IO_TOKEN }} && cargo publish
+
+      # Prepare github release
+      - name: Build linux
+        run: cargo build --release
+      - name: Build windows
+        run: cross build --release --target x86_64-pc-windows-gnu
+      - name: Publish release assets
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            target/release/fake_haproxy
+            target/x86_64-pc-windows-gnu/release/fake_haproxy.exe
+
+      # Prepare docker release
+      - name: Publish Docker
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: ikkerens/fake_haproxy
+          username: ikkerens
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          registry: docker.pkg.github.com
+      - name: Update Docker Hub Description
+        uses: peter-evans/dockerhub-description@v2.0.0
+        env:
+          DOCKERHUB_USERNAME: ikkerens
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          DOCKERHUB_REPOSITORY: ikkerens/fake_haproxy

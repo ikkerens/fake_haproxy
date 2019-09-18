@@ -1,0 +1,22 @@
+name: Snapshot
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout git repository
+      uses: actions/checkout@v1
+    - name: Test code formatting
+      run: cargo fmt --all -- --check
+    - name: Test code correctness
+      run: cargo clippy --all -- -D warnings
+    - name: Build docker
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: docker.pkg.github.com/ikkerens/fake_haproxy/fake_haproxy
+        username: ikkerens
+        password: ${{ secrets.DOCKER_GITHUB_PASSWORD }}
+        registry: docker.pkg.github.com
+        snapshot: true
