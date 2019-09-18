@@ -1,13 +1,17 @@
 #[macro_use]
 extern crate failure;
 
-use {
-	crate::{
-		error::{Error, Error::Arguments},
-		forwarder::Thread,
-	},
-	getopts::Options,
-	std::{env, sync::mpsc},
+use std::env;
+#[cfg(windows)]
+use std::sync::mpsc;
+
+use getopts::Options;
+#[cfg(not(windows))]
+use signal_hook::{iterator::Signals, SIGINT, SIGTERM};
+
+use crate::{
+	error::{Error, Error::Arguments},
+	forwarder::Thread,
 };
 
 mod async_stream;
@@ -57,9 +61,17 @@ fn main() -> Result<(), Error> {
 	}
 
 	// And wait for a signal before shutting down
-	let (shutdown, shutdown_wait) = mpsc::channel();
-	ctrlc::set_handler(move || shutdown.send(()).unwrap()).unwrap();
-	shutdown_wait.recv().unwrap();
+	#[cfg(windows)]
+	{
+		let (shutdown, shutdown_wait) = mpsc::channel();
+		ctrlc::set_handler(move || shutdown.send(()).unwrap()).unwrap();
+		shutdown_wait.recv().unwrap();
+	}
+	#[cfg(not(windows))]
+	{
+		let signals = Signals::new(&[SIGINT, SIGTERM]).unwrap();
+		signals.forever().next();
+	}
 
 	Ok(())
 }

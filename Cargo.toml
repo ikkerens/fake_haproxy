@@ -9,9 +9,15 @@ license = "MIT"
 exclude = ["/README.md", "/Dockerfile", "/.dockerignore", "/.gitignore", "/.github/", "/.rustfmt.toml"]
 
 [dependencies]
-ctrlc = "3.1"
 failure = "0.1"
 futures = "0.1"
 getopts = "0.2"
 tokio-core = "0.1"
 tokio-io = "0.1"
+
+[target.'cfg(windows)'.dependencies]
+ctrlc = "3.1"
+
+[target.'cfg(not(windows))'.dependencies]
+signal-hook = "0.1"
+
