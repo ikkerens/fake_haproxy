@@ -13,7 +13,7 @@ jobs:
     - name: Test code correctness
       run: cargo clippy --all -- -D warnings
     - name: Build docker
-      uses: elgohr/Publish-Docker-Github-Action@master
+      uses: elgohr/Publish-Docker-Github-Action@v5
       with:
         name: docker.pkg.github.com/ikkerens/fake_haproxy/fake_haproxy
         username: ikkerens

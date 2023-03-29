@@ -43,7 +43,7 @@ jobs:
 
       # Prepare docker release
       - name: Publish Docker
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: ikkerens/fake_haproxy
           username: ikkerens
